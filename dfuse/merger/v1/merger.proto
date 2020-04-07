@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package dfuse.merger.v1;
+
+import "dfuse/bstream/v1/bstream.proto";
+
+option go_package = "github.com/dfuse-io/pbgo/dfuse/merger/v1";
+
+service Merger {
+  rpc PreMergedBlocks(Request) returns (Response);
+}
+
+message Request {
+  uint64 lowBlockNum = 1;
+  string highBlockID = 2;
+}
+
+message Response {
+  bool found = 1;
+  repeated dfuse.bstream.v1.Block blocks = 2;
+}

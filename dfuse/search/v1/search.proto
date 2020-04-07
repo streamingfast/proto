@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+package dfuse.search.v1;
+
+option go_package = "github.com/dfuse-io/pbgo/dfuse/search/v1";
+
+import "dfuse/codecs/deos/deos.proto";
+
+service Backend {
+  rpc StreamMatches(BackendRequest) returns (stream SearchMatch);
+}
+
+service Router {
+  rpc StreamMatches(RouterRequest) returns (stream SearchMatch);
+}
+
+service ForkResolver {
+  rpc StreamUndoMatches(ForkResolveRequest) returns (stream SearchMatch);
+}
+
+message ForkResolveRequest {
+  string query = 1;
+  repeated BlockRef forkedBlockRefs = 2;
+}
+
+message BlockRef {
+  uint64 blockNum = 1;
+  string blockID = 2;
+}
+
+message BackendRequest {
+  string query = 1;
+  uint64 lowBlockNum = 2; // Inclusive
+  uint64 highBlockNum = 3; // Inclusive
+  bool descending = 4;
+
+  // More specific to the live / reversible backend
+  bool withReversible = 5; // Fails on Archive
+  uint64 liveMarkerInterval = 6; // in blocks
+  bool stopAtVirtualHead = 7;
+
+  string navigateFromBlockID = 8; // When a cursor was provided, which had a HEAD block ID
+  uint64 navigateFromBlockNum = 9; // When a cursor was provided, which had a HEAD block ID
+}
+
+message RouterRequest {
+  string query = 1;
+  int64 lowBlockNum = 2; // Inclusive
+  int64 highBlockNum = 3; // Inclusive
+
+  bool lowBlockUnbounded = 13;
+  bool highBlockUnbounded = 14;
+
+  bool descending = 4;
+  string cursor = 5;
+  int64 limit = 6;
+  bool withReversible = 7; // Fails on Archive
+
+  enum Mode {
+    STREAMING = 0;
+    PAGINATED = 1;
+  }
+  Mode mode = 8;
+
+  // Legacy boundaries, overrides `lowBlockNum` and `highBlockNum`.
+  bool useLegacyBoundaries = 9;
+  uint64 startBlock = 10;
+  uint64 blockCount = 11;
+
+  uint64 liveMarkerInterval = 12; // in blocks
+}
+
+message SearchMatch {
+  string trxIdPrefix = 1;
+  uint64 blockNum = 2;
+  uint64 index = 3;
+  string cursor = 4;
+
+  oneof specific {
+    EOSMatch eos = 10;
+    ETHMatch eth = 11;
+  }
+
+  reserved 13 to 24;
+
+  bool undo = 25;
+  uint64 irrBlockNum = 26;
+}
+
+// EOS
+
+message EOSDocumentID {
+  uint64 blockNum = 1;
+  uint64 actionIndex = 2;
+  uint64 transactionIndex = 3;
+  bytes transactionIDPrefix = 4;
+}
+
+message EOSMatch {
+  repeated uint32 actionIndexes = 1;
+
+  reserved 2 to 7;
+
+  EOSBlockTrxPayload block = 8;
+}
+
+message EOSBlockTrxPayload {
+  dfuse.codecs.deos.BlockHeader blockHeader = 1;
+  string blockID = 2;
+
+  reserved 3 to 5;
+
+  dfuse.codecs.deos.TransactionTrace trace = 6;
+
+  reserved 7 to 11; // old EOS JSON-based payload
+}
+
+
+// ETH
+
+message ETHMatch {
+  repeated uint32 callIndexes = 1;
+  repeated uint32 logIndexes = 2;
+
+  reserved 3 to 7;
+
+  ETHBlockTrxPayload block = 8;
+}
+
+message ETHBlockTrxPayload {
+  // Expected to be a deth.BlockHeader
+  bytes blockHeader = 1;
+  string blockID = 2;
+  uint64 blockNum = 3;
+
+  reserved 4 to 9;
+
+  // Expected to be a deth.SignedTransaction
+  bytes trace = 10;
+}

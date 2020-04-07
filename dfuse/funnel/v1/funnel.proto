@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package dfuse.search.v1;
+
+option go_package = "funnel";
+import "dfuse/codecs/deos/deos.proto";
+
+service Funnel {
+  rpc StreamBlocks(StreamBlockRequest) returns (stream StreamBlockResponse);
+}
+
+message StreamBlockRequest{
+  int64 fromBlockNum = 2;
+  bool irreversibleOnly = 3;
+}
+
+message StreamBlockResponse{
+  bool undo = 1;
+  dfuse.codecs.deos.Block block = 2;
+}

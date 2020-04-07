@@ -1,0 +1,161 @@
+syntax = "proto3";
+
+package dfuse.tokenmeta.v1;
+
+option go_package = "github.com/dfuse-io/pbgo/dfuse/tokenmeta/v1";
+
+service EOS {
+  rpc GetTokens(EOSGetTokensRequest) returns (EOSTokensResponse);
+  rpc GetAccountBalances(EOSGetAccountBalancesRequest) returns (EOSAccountBalancesResponse);
+  rpc GetTokenBalances(EOSGetTokenBalancesRequest) returns (EOSTokenBalancesResponse);
+}
+
+message EOSGetTokensRequest {
+  uint32 limit = 1; // 0 means all
+  SortOrder sort_order = 2;
+  SortField sort_field = 3;
+  SortOrder secondary_sort_order = 8;
+  SortField secondary_sort_field = 9;
+
+  repeated string filter_token_symbols = 4;   // all if none
+  repeated string filter_token_contracts = 5; // all if none
+
+  TokenCursor before_cursor = 6;
+  TokenCursor after_cursor = 7;
+
+  // you can sort by either: Symbol alphanumerically, holder count, market cap
+  enum SortField {
+    NONE = 0;
+    ALPHA = 1;
+    HOLDERS = 2;
+    MARKET_CAP = 3;
+  }
+}
+
+message EOSTokensResponse {
+  repeated EOSToken tokens = 1;
+  uint64 atBlockNum = 2;
+  string atBlockId = 3;
+}
+
+message EOSToken {
+  string contract = 1;          // name of contract, who'se `abi` contains `stat` and `account` with the proper struct.
+  string symbol = 2;            // from maximum_supply or total_supply
+  uint32 precision = 3;         // from maximum supply or total supply
+  string issuer = 4;            // from `stat` table
+  uint64 maximum_supply = 5;    // from `stat` table
+  uint64 total_supply = 6;      // from `stat` table
+  uint64 holders = 7;           // present on `block_dog`, could be fetched from `scopes` from `fluxdb`, and kept in sync with block logs.
+
+  // Eventually:
+  uint64 market_cap = 8;        // In USD cents (precision = 2). Taken from some exchanges or whatnot. Zero means unknown.
+  string website = 9;           // URL to the website, according to whatever site.
+  string logo = 10;             // URL to a logo, hosted somewhere
+}
+
+message EOSGetAccountBalancesRequest {
+  string account = 1; // Get all Assets contract.symbol for a given account (eoscanadadad)
+  uint32 limit = 2;   // 0 means all
+  SortOrder sort_order = 3;
+  SortField sort_field = 4;
+  SortOrder secondary_sort_order = 10;
+  SortField secondary_sort_field = 11;
+
+  repeated string filter_token_contracts = 5; // All if none
+  repeated string filter_token_symbols = 6;   // All if none
+  repeated Option options = 9;
+
+  AccountBalanceCursor before_cursor = 7;
+  AccountBalanceCursor after_cursor = 8;
+
+  // You can sort by either: Symbol alphanumerically, Token Amount, market value of tokens
+  enum SortField {
+    NONE = 0;
+    ALPHA = 1;
+    AMOUNT = 2;
+    MARKET_VALUE = 3;
+  }
+
+  enum Option {
+    EOS_INCLUDE_STAKED = 0;
+  }
+}
+
+message EOSAccountBalancesResponse {
+  repeated EOSAccountBalance balances = 1;
+  uint64 atBlockNum = 2;
+  string atBlockId = 3;
+}
+
+message EOSGetTokenBalancesRequest {
+  string token_contract = 1;
+  uint32 limit = 2; // 0 means all
+  SortOrder sort_order = 3;
+  SortField sort_field = 4;
+  SortOrder secondary_sort_order = 10;
+  SortField secondary_sort_field = 11;
+
+  repeated string filter_token_symbols = 5;   // All if none
+  repeated string filter_holder_accounts = 6; // All if none
+  repeated Option options = 9;
+
+  AccountBalanceCursor before_cursor = 7;
+  AccountBalanceCursor after_cursor = 8;
+
+  // You can sort by either: Account alphanumerically, Token Amount, market value of tokens
+  enum SortField {
+    NONE = 0;
+    ALPHA = 1;
+    AMOUNT = 2;
+    MARKET_VALUE = 3;
+  }
+
+  enum Option {
+    EOS_INCLUDE_STAKED = 0;
+  }
+}
+
+message EOSTokenBalancesResponse {
+  repeated EOSTokenContractBalancesResponse tokens = 1; // All if none
+  uint64 atBlockNum = 2;
+  string atBlockId = 3;
+}
+
+message EOSTokenContractBalancesResponse {
+  EOSToken token = 1;
+  repeated EOSAccountBalance balances = 2;
+}
+
+
+message EOSAccountBalance {
+  string token_contract = 1;
+  string account = 2;
+
+  uint64 amount = 3;
+  uint32 precision = 4;
+  string symbol = 5;
+}
+
+enum SortOrder {
+  ASC = 0;
+  DESC = 1;
+}
+
+message TransactionCursor {
+  int32 ver = 1;
+  uint32 transactionIndex = 2;
+  string transactionHash = 3;
+}
+
+message TokenCursor {
+  int32 ver = 1;
+  string contract = 2;
+  string symbol = 3;
+}
+
+message AccountBalanceCursor {
+  int32 ver = 1;
+  string contract = 2;
+  string symbol = 3;
+  string account = 4;
+}

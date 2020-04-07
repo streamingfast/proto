@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package dfuse.abicodec.eth.v1;
+
+option go_package = "pbabicodec";
+
+service Decoder {
+  rpc DecodeMethod(DecodeMethodRequest) returns (DecodeMethodResponse);
+}
+
+message DecodeMethodRequest {
+  string address = 1;
+  bytes input = 2;
+}
+
+message DecodeMethodResponse {
+  string signature = 1;
+  // Parameters is actually a JSON payload of the decoded parameters
+  string parametersJson = 2;
+}

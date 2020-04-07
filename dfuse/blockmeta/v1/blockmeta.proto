@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package dfuse.blockmeta.v1;
+
+option go_package = "github.com/dfuse-io/pbgo/dfuse/blockmeta/v1";
+
+import "google/protobuf/timestamp.proto";
+
+service TimeToID {
+  rpc At (TimeRequest) returns (BlockResponse);
+  rpc After (RelativeTimeRequest) returns (BlockResponse);
+  rpc Before (RelativeTimeRequest) returns (BlockResponse);
+}
+
+service BlockID {
+  //
+  rpc NumToID (NumToIDRequest) returns (BlockIDResponse);
+
+  // Query the CURRENT irreversible block
+  rpc LIBID (LIBRequest) returns (BlockIDResponse);
+}
+
+
+service Forks {
+  rpc Resolve (ForkResolveRequest) returns (ForkResolveResponse);
+}
+
+message ForkResolveRequest {
+  BlockRef block = 1;
+}
+
+message ForkResolveResponse {
+  repeated BlockRef forkedBlockRefs = 1;
+}
+
+message BlockRef {
+  uint64 blockNum = 1;
+  string blockID = 2;
+}
+
+
+message LIBRequest {}
+
+message NumToIDRequest {
+  uint64 blockNum = 1;
+}
+
+message TimeRequest {
+  google.protobuf.Timestamp time = 1;
+}
+
+message RelativeTimeRequest {
+  google.protobuf.Timestamp time = 1;
+  bool inclusive = 2;
+}
+
+// Block ID that matched the request
+message BlockResponse {
+  string id = 1;  // Block ID that matched
+  google.protobuf.Timestamp time = 2; // Precise block time as a Timestamp
+  bool irreversible = 3;  // Whether it's known to be irreversible or not
+}
+
+message BlockIDResponse {
+  string id = 1;
+  int64 blockTimeMilli = 2;
+  bool irreversible = 3;
+}
+
+
+service ChainDiscriminator {
+    rpc InLongestChain (InLongestChainRequest) returns (InLongestChainResponse);
+    rpc GetBlockInLongestChain (GetBlockInLongestChainRequest) returns (GetBlockInLongestChainResponse);
+}
+
+message InLongestChainRequest {
+  string blockID = 1;
+}
+
+message InLongestChainResponse {
+  bool inLongestChain = 1;
+  bool irreversible = 2;
+}
+
+message GetBlockInLongestChainRequest {
+  uint64 block_num = 1;
+}
+
+message GetBlockInLongestChainResponse {
+  string block_id = 1;
+  uint64 block_num = 2;
+  bool irreversible = 3;
+}

@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package dfuse.headinfo.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/dfuse-io/pbgo/dfuse/headinfo/v1";
+
+service HeadInfo {
+  rpc GetHeadInfo(HeadInfoRequest) returns (HeadInfoResponse);
+}
+
+service StreamingHeadInfo {
+  rpc StreamHeadInfo(HeadInfoRequest) returns (stream HeadInfoResponse);
+}
+
+message HeadInfoRequest {
+  enum Source {
+    STREAM = 0;
+    NETWORK = 1;
+    KVDB = 2;
+  }
+  Source source = 1;
+}
+
+message HeadInfoResponse {
+  uint64 libNum = 1;
+  string libID = 2;
+
+  reserved 3 to 9;
+
+  uint64 headNum = 10;
+  string headID = 11;
+  google.protobuf.Timestamp headTime = 12;
+
+  reserved 13 to 19;
+}
