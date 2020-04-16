@@ -4,7 +4,7 @@ package dfuse.search.v1;
 
 option go_package = "github.com/dfuse-io/pbgo/dfuse/search/v1";
 
-import "dfuse/codecs/deos/deos.proto";
+import "google/protobuf/any.proto";
 
 service Backend {
   rpc StreamMatches(BackendRequest) returns (stream SearchMatch);
@@ -76,65 +76,16 @@ message SearchMatch {
   uint64 index = 3;
   string cursor = 4;
 
-  oneof specific {
-    EOSMatch eos = 10;
-    ETHMatch eth = 11;
-  }
+  // Fields 10 & 11 were previously used for chain specific match, replaced by `Any` type below
+  reserved 10 to 11;
 
-  reserved 13 to 24;
+  // Holds chain specific Protobuf message, this usually contains informations about how the
+  // document are indexed (for example at the action level on EOSIO). Check out chain specific
+  // repository for exact possible message.
+  google.protobuf.Any chainSpecific = 13;
+
+  reserved 14 to 24;
 
   bool undo = 25;
   uint64 irrBlockNum = 26;
-}
-
-// EOS
-
-message EOSDocumentID {
-  uint64 blockNum = 1;
-  uint64 actionIndex = 2;
-  uint64 transactionIndex = 3;
-  bytes transactionIDPrefix = 4;
-}
-
-message EOSMatch {
-  repeated uint32 actionIndexes = 1;
-
-  reserved 2 to 7;
-
-  EOSBlockTrxPayload block = 8;
-}
-
-message EOSBlockTrxPayload {
-  dfuse.codecs.deos.BlockHeader blockHeader = 1;
-  string blockID = 2;
-
-  reserved 3 to 5;
-
-  dfuse.codecs.deos.TransactionTrace trace = 6;
-
-  reserved 7 to 11; // old EOS JSON-based payload
-}
-
-
-// ETH
-
-message ETHMatch {
-  repeated uint32 callIndexes = 1;
-  repeated uint32 logIndexes = 2;
-
-  reserved 3 to 7;
-
-  ETHBlockTrxPayload block = 8;
-}
-
-message ETHBlockTrxPayload {
-  // Expected to be a deth.BlockHeader
-  bytes blockHeader = 1;
-  string blockID = 2;
-  uint64 blockNum = 3;
-
-  reserved 4 to 9;
-
-  // Expected to be a deth.SignedTransaction
-  bytes trace = 10;
 }
