@@ -4,7 +4,7 @@ package dfuse.bstream.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/dfuse-io/pbgo/dfuse/bstream/v1";
+option go_package = "github.com/dfuse-io/pbgo/dfuse/bstream/v1;pbbstream";
 
 service BlockStream {
   rpc Blocks(BlockRequest) returns (stream Block);

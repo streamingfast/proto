@@ -4,7 +4,7 @@ package dfuse.merger.v1;
 
 import "dfuse/bstream/v1/bstream.proto";
 
-option go_package = "github.com/dfuse-io/pbgo/dfuse/merger/v1";
+option go_package = "github.com/dfuse-io/pbgo/dfuse/merger/v1;pbmerger";
 
 service Merger {
   rpc PreMergedBlocks(Request) returns (Response);

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package dfuse.blockmeta.v1;
 
-option go_package = "github.com/dfuse-io/pbgo/dfuse/blockmeta/v1";
+option go_package = "github.com/dfuse-io/pbgo/dfuse/blockmeta/v1;pbblockmeta";
 
 import "google/protobuf/timestamp.proto";
 
