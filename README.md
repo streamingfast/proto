@@ -1,9 +1,19 @@
-Repository of the protobuf service definitions of the dfuse architecture
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# `dfuse` for EOSIO protobuf definitions
 
-These hold Services, and not data. We would like to create small libraries for the Data definitions, alongside some Go code that facilitate their use. For example the Ethereum Block package, it's going to be used here and there, and wrapping them is valuable.. and pulling Go versions is better than generating code in each project based on Data protobufs.
+This repository holds protocol buffer definition files (`.proto`) for dfuse core products.
 
+## Usage
 
-Install proto tools here:
+Heads on to [Google Protocol Buffer Tutorials](https://developers.google.com/protocol-buffers/docs/tutorials), choose
+your language of choice, then follow instructions in `Compiling your protocol buffers` section about how to
+generate the source files for your language.
 
-* https://github.com/golang/protobuf
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+
+## License
+
+All `dfuse` components are generally **Apache 2.0** licensed. See [LICENSE](./LICENSE).
