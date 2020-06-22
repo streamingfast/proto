@@ -9,12 +9,12 @@ option go_package = "github.com/dfuse-io/pbgo/dfuse/fluxdb/v1;pbfluxdb";
 //
 // A FluxDB row is always of the form:
 // ```
-// <collection>/<tablet>/<blockNum>/<primaryKey> => <payload>
+// <collection>/<tablet>/<height>/<primaryKey> => <payload>
 // ```
 message Row {
 	string collection = 1;
 	string tablet_key = 2;
-	string block_num_key = 3;
+	string height_key = 3;
 	string prim_key = 4;
 	bytes payload = 5;
 }
