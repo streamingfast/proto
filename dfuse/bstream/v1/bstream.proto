@@ -30,6 +30,7 @@ message BlockRequest {
   Order order = 3;
 
   string requester = 4;
+  uint64 mandatory_first_block_num = 5; // if non-zero, the value of 'burst' is ignored and the blockstream must start at this exact block num or return an error.
 }
 
 message Block {
