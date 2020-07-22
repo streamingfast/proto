@@ -17,5 +17,5 @@ message Request {
 
 message Response {
   bool found = 1;
-  dfuse.bstream.v1.Block blocks = 2;
+  dfuse.bstream.v1.Block block = 2;
 }
