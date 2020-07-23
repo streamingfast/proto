@@ -4,6 +4,11 @@ package dfuse.fluxdb.v1;
 
 option go_package = "github.com/dfuse-io/pbgo/dfuse/fluxdb/v1;pbfluxdb";
 
+message Index {
+  uint64 squelched_count = 1;
+  map<string, uint64> primary_key_to_height = 2;
+}
+
 // Row represents a FluxDB storage row as seen by the underlying storage
 // engine which is a Key-Value store.
 //
@@ -12,9 +17,9 @@ option go_package = "github.com/dfuse-io/pbgo/dfuse/fluxdb/v1;pbfluxdb";
 // <collection>/<tablet>/<height>/<primaryKey> => <payload>
 // ```
 message Row {
-	string collection = 1;
-	string tablet_key = 2;
-	string height_key = 3;
-	string prim_key = 4;
-	bytes payload = 5;
+  string collection = 1;
+  string tablet_key = 2;
+  string height_key = 3;
+  string prim_key = 4;
+  bytes payload = 5;
 }
