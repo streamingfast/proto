@@ -44,11 +44,17 @@ message Block {
   bytes payload_buffer = 8;
 }
 
+message BlockRef {
+	uint64 num = 1;
+	string id = 2;
+}
+
 enum Protocol {
   UNKNOWN = 0;
   EOS = 1;
   ETH = 2;
 }
+
 
 // This service serves unexecuted mempool transactions
 service TransactionStream {
