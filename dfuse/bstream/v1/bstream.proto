@@ -10,7 +10,6 @@ service BlockStream {
   rpc Blocks(BlockRequest) returns (stream Block);
 }
 
-
 message BlockRequest {
   // Number of blocks we want to get in burst upon connection, on a best effort basis.
   int64 burst = 1;

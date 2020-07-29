@@ -6,9 +6,14 @@ option go_package = "github.com/dfuse-io/pbgo/dfuse/fluxdb/v1;pbfluxdb";
 
 import "dfuse/bstream/v1/bstream.proto";
 
-message Index {
+message TabletIndex {
   uint64 squelched_count = 1;
-  map<string, uint64> primary_key_to_height = 2;
+  repeated TabletIndexEntry entries = 2;
+}
+
+message TabletIndexEntry {
+  bytes primary_key = 1;
+  uint64 height = 2;
 }
 
 // Row represents a FluxDB storage row as seen by the underlying storage
