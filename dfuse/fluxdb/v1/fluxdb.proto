@@ -6,29 +6,18 @@ option go_package = "github.com/dfuse-io/pbgo/dfuse/fluxdb/v1;pbfluxdb";
 
 import "dfuse/bstream/v1/bstream.proto";
 
+// TabletIndex is the binary message used to save a Tablet index
+// value inside persisten storage.
 message TabletIndex {
   uint64 squelched_count = 1;
   repeated TabletIndexEntry entries = 2;
 }
 
+// TabletIndexEntry represents a single entry within a Tablet index
+// instance.
 message TabletIndexEntry {
   bytes primary_key = 1;
   uint64 height = 2;
-}
-
-// Row represents a FluxDB storage row as seen by the underlying storage
-// engine which is a Key-Value store.
-//
-// A FluxDB row is always of the form:
-// ```
-// <collection>/<tablet>/<height>/<primaryKey> => <payload>
-// ```
-message Row {
-  string collection = 1;
-  string tablet_key = 2;
-  string height_key = 3;
-  string prim_key = 4;
-  bytes payload = 5;
 }
 
 // Checkpoint represents where FluxDB did its last write
@@ -38,4 +27,22 @@ message Row {
 message Checkpoint {
 	uint64 height = 1;
 	dfuse.bstream.v1.BlockRef block = 2;
+}
+
+// WriteRequest represents all the necessary data to write to database
+// for a given height.
+//
+// This is used by the reprocessing sharder to store write requests
+// for a given specific shard over a bounded sequence of heights.
+message WriteRequest {
+  repeated WriteEntry singlet_entries = 1;
+  repeated WriteEntry tablet_rows = 2;
+
+  uint64 height = 3;
+	dfuse.bstream.v1.BlockRef block = 4;
+}
+
+message WriteEntry {
+  bytes key = 2;
+  bytes value = 3;
 }
