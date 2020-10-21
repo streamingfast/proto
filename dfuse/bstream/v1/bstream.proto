@@ -110,18 +110,3 @@ enum Protocol {
   EOS = 1;
   ETH = 2;
 }
-
-
-// This service serves unexecuted mempool transactions
-service TransactionStream {
-  rpc Transactions(TransactionRequest) returns (stream Transaction);
-}
-
-message TransactionRequest {
-}
-
-message Transaction {
-  string id = 1;  // hash or ID of the transaction
-  Protocol payload_protocol = 6;
-  bytes payload_buffer = 8;
-}
