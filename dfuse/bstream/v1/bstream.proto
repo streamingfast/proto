@@ -58,6 +58,14 @@ message BlocksRequestV2 {
 
   bool decoded = 9; // BlockResponse.block are native blocks, or `bstream` wrapped blocks.
 
+  // The CEL filter expression used to include transactions, specific to the target protocol, works
+  // in combination with `filtering_exclude_filter_expr` value.
+  string filtering_include_filter_expr = 10;
+
+  // The CEL filter expression used to exclude transactions, specific to the target protocol, works
+  // in combination with `filtering_include_filter_expr` value.
+  string filtering_exclude_filter_expr = 11;
+
   // Eventually, choose the backing source blocks (merged blocks location + corresponding relayers)
   //  string source_blocks = 0; // "full", "nospam", "system", "eosio"
 }
