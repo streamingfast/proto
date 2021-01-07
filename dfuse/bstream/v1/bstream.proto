@@ -41,34 +41,57 @@ message BlockRequest {
 
 // Version 2 request
 
+message IrreversibleBlocksRequestV2 {
+  int64 start_block_num = 1;
+}
+
+// For historical segments, forks are not passed
 message BlocksRequestV2 {
-  int64 start_block_num = 1; // Can be negative, will be resolved relative to the chain head
-  uint64 start_block_id = 2; // If provided, makes sure to restart at that exact block ID, and navigate forks from there.
-  bool exclude_start_block = 3; // If true, the stream will start immediately after seeing the provided start block (`num` or `id`), but that block will not be streamed out.
+  // Block number to start at.
+  // If NEGATIVE, resolves start block number relatively to the chain HEAD.
+  // If `start_cursor` is passed, this value is ignored.
+  int64 start_block_num = 1;
+  // Start again from an opaque cursor, immediately after the Block pointed by the cursor.
+  // Obtain this value from a previously received BlockResponseV2.cursor
+  // This value takes precedence over `start_block_num`.
+  string start_cursor = 13;
 
-  bool stream_blocks_from_lib = 4; // When discovering the actual start block (if `start_block_num` is negative for example), the stream will be fed with all blocks since the irreversible block preceding that start block
+  // If non-zero, stream will close AFTER that block has passed (inclusive).
+  uint64 stop_block_num = 5;
 
-  // Eventually, add CEL filters
+  //bool irreversible_only = 14;
 
-  uint64 stop_block_num = 5; // If non-zero, stream will close after that block has passed.
-  bool exclude_stop_block = 6; // If true, the stream will be interrupted after the block BEFORE `stop_block_num` was streamed out.
+  // Most common steps will be [STEP_IRREVERSIBLE], or [STEP_NEW, STEP_UNDO, STEP_IRREVERSIBLE]
+  repeated ForkStep forks_steps = 8; // Filter the steps you want to see. If not specified, defaults to all steps.
 
-  bool handleForks = 7; // If true, fork handling will be enabled, providing `undo`, `step`, `step_count` and `step_index` signals in the `BlockResponseV2` response objects.
-  repeated ForkStep handle_forks_steps = 8; // Filter the steps you want to see. If not specified, defaults to all steps.
-
-  bool decoded = 9; // BlockResponse.block are native blocks, or `bstream` wrapped blocks.
-
-  // The CEL filter expression used to include transactions, specific to the target protocol, works
+  // The CEL filter expression used to include transactions,
+  // specific to the target protocol, works
   // in combination with `exclude_filter_expr` value.
   string include_filter_expr = 10;
 
-  // The CEL filter expression used to exclude transactions, specific to the target protocol, works
+  // The CEL filter expression used to exclude transactions,
+  // specific to the target protocol, works
   // in combination with `include_filter_expr` value.
   string exclude_filter_expr = 11;
 
   // Eventually, choose the backing source blocks (merged blocks location + corresponding relayers)
   //  string source_blocks = 0; // "full", "nospam", "system", "eosio"
 }
+
+/*
+
+
+blocks() {
+  block {
+    ... on IrreversibleBlock {
+    }
+    ... on UndoBlock {
+    }
+  }
+}
+
+ */
+
 
 message BlockResponseV2 {
   // Chain specific blocks:
@@ -78,20 +101,55 @@ message BlockResponseV2 {
   // * dfuse.bstream.v1.Block
   google.protobuf.Any block = 1;
 
+  // oneof event {
+  //   NewEvent new_event = 1;
+  //   IrreversibleEvent irreversible_event = 1;
+  //   message NewEvent {
+  //     google.protobuf.Any block = 1;
+  //     string cursor = 2;
+  //   }
+  //   message IrreversibleEvent {
+  //     google.protobuf.Any block = 1;
+  //   }
+  // }
+
   bool undo = 5;
   ForkStep step = 6;
-  uint64 step_count = 7; // Number of steps in a stride (when passing irrersibility, multiple blocks are passed in a swift)
-  uint64 step_index = 8; // Index of the step in this stride
-  bool known_to_be_irreversible = 9;
+  bool irreversible = 9;
+
+  // tu veux aller vite, pour éviter d'avoir le NEW et le IRREVERSIBLE steps
+  // query avec steps == IRREVERSIBLE only.. on va t'envoyer des cursors
+  // quand tu veux être real-time, tu me donne ce cursor là, et j'te donne les `NEW`
+  // à partir de là.
+
+  // je suis en NEW + IRREVERSIBLE
+  // NEW: rev:00004242deabcdeasdlkjaslfdkjadslfkjaslkfjdsaf
+  // IRR: rev:00004242deabcdeasdlkjaslfdkjadslfkjaslkfjdsaf:irr:62352341223 (12 in the past)
+  // IRR: rev:00004242deabcdeasdlkjaslfdkjadslfkjaslkfjdsaf:irr:62352341224 (11 in the past)
+  // IRR: rev:00004242deabcdeasdlkjaslfdkjadslfkjaslkfjdsaf:irr:62352341225 (10 in the past)
+  // IRR: rev:00004242deabcdeasdlkjaslfdkjadslfkjaslkfjdsaf:irr:62352341226...
+  // IRR: rev:00004242deabcdeasdlkjaslfdkjadslfkjaslkfjdsaf:irr:62352341227 (1 in the past)
+  // NEW: rev:00004243deabcdeasdlkjaslfdkjadslfkjaslkfjdsaf
+  // NEW: rev:00004244deabcdeasdlkjaslfdkjadslfkjaslkfjdsaf
+  // NEW: rev:00004245deabcdeasdlkjaslfdkjadslfkjaslkfjdsaf
+  // UNDO (w/ 45): rev:00004245deabcdeasdlkjaslfdkjadslfkjaslkfjdsaf:was_undo
+  // NEW:  rev:00004245deabcdeasdlkjaslfdkjadslfkjaslkfjdsaf
+  // UNDO: rev:00004244deabcdeasdlkjaslfdkjadslfkjaslkfjdsaf
+  // UNDO: rev:00004243deabcdeasdlkjaslfdkjadslfkjaslkfjdsaf
+  // NEW: rev:00004244mamamamama
+
+  // je suis en IRREVERSIBLE only
+  // IRR: irr:1231231232131
+  string cursor = 10;
 }
 
 enum ForkStep {
   STEP_UNKNOWN = 0;
   STEP_NEW = 1; // The first time we see a block, that is linear with the previous block
   STEP_UNDO = 2; // A block seen previously, that is to be undone
-  STEP_REDO = 3; // After a re-org, you might see a REDO which is similar to NEW, except that you've seen it already.
+  reserved 3; // was STEP_REDO
   STEP_IRREVERSIBLE = 4;
-  STEP_STALLED = 5;
+  reserved 5 ; // was STEP_STALLED
 }
 
 // General response and structs
