@@ -42,21 +42,16 @@ message BlockRequest {
 // Version 2 request
 
 message BlocksRequestV2 {
-  int64 start_block_num = 1; // Can be negative, will be resolved relative to the chain head
-  uint64 start_block_id = 2; // If provided, makes sure to restart at that exact block ID, and navigate forks from there.
-  bool exclude_start_block = 3; // If true, the stream will start immediately after seeing the provided start block (`num` or `id`), but that block will not be streamed out.
+  // Can be negative, will be resolved relative to the chain head. When not provided,
+  // start at first streamable block of the chain.
+  //
+  // Not all chain starts at the same block number, so you might get an higher block than
+  // requested when using default value of 0.
+  int64 start_block_num = 1;
 
-  bool stream_blocks_from_lib = 4; // When discovering the actual start block (if `start_block_num` is negative for example), the stream will be fed with all blocks since the irreversible block preceding that start block
-
-  // Eventually, add CEL filters
+  string start_cursor = 2; // If provided, makes sure to restart at that exact block ID, and navigate forks from there.
 
   uint64 stop_block_num = 5; // If non-zero, stream will close after that block has passed.
-  bool exclude_stop_block = 6; // If true, the stream will be interrupted after the block BEFORE `stop_block_num` was streamed out.
-
-  bool handleForks = 7; // If true, fork handling will be enabled, providing `undo`, `step`, `step_count` and `step_index` signals in the `BlockResponseV2` response objects.
-  repeated ForkStep handle_forks_steps = 8; // Filter the steps you want to see. If not specified, defaults to all steps.
-
-  bool decoded = 9; // BlockResponse.block are native blocks, or `bstream` wrapped blocks.
 
   // The CEL filter expression used to include transactions, specific to the target protocol, works
   // in combination with `exclude_filter_expr` value.
@@ -65,6 +60,10 @@ message BlocksRequestV2 {
   // The CEL filter expression used to exclude transactions, specific to the target protocol, works
   // in combination with `include_filter_expr` value.
   string exclude_filter_expr = 11;
+
+  // **Warning** Experimental API, controls how blocks are trimmed for extraneous information before
+  // being sent back. The actual trimming is chain dependent.
+  WithDetails with_details = 15;
 
   // Eventually, choose the backing source blocks (merged blocks location + corresponding relayers)
   //  string source_blocks = 0; // "full", "nospam", "system", "eosio"
@@ -92,6 +91,11 @@ enum ForkStep {
   STEP_REDO = 3; // After a re-org, you might see a REDO which is similar to NEW, except that you've seen it already.
   STEP_IRREVERSIBLE = 4;
   STEP_STALLED = 5;
+}
+
+enum WithDetails {
+  FULL_DETAILS = 0;
+  LIGHT_DETAILS = 1;
 }
 
 // General response and structs
