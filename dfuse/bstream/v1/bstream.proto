@@ -92,7 +92,7 @@ message BlocksRequestV2 {
 
   // **Warning** Experimental API, controls how blocks are trimmed for extraneous information before
   // being sent back. The actual trimming is chain dependent.
-  WithDetails with_details = 15;
+  BlockDetails details = 15;
 }
 
 message BlockResponseV2 {
@@ -113,9 +113,9 @@ enum ForkStep {
   reserved 5 ; // was STEP_STALLED
 }
 
-enum WithDetails {
-  FULL_DETAILS = 0;
-  LIGHT_DETAILS = 1;
+enum BlockDetails {
+  BLOCK_DETAILS_FULL = 0;
+  BLOCK_DETAILS_LIGHT = 1;
 }
 
 message Cursor {
