@@ -119,8 +119,10 @@ enum BlockDetails {
 }
 
 message Cursor {
-  string block_id = 1;
-  uint64 block_num = 2;
+  BlockRef block = 1;
+  BlockRef head_block = 2;
+  BlockRef lib = 3;
+  ForkStep step = 4;
 }
 
 // General response and structs
