@@ -93,6 +93,10 @@ message BlocksRequestV2 {
   // **Warning** Experimental API, controls how blocks are trimmed for extraneous information before
   // being sent back. The actual trimming is chain dependent.
   BlockDetails details = 15;
+
+  // controls how many confirmations will consider a given block as final (STEP_IRREVERSIBLE). Warning, if any reorg goes beyond that number of confirmations, the request will stall forever
+  uint64 confirmations = 16;
+
 }
 
 message BlockResponseV2 {
