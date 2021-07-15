@@ -152,4 +152,5 @@ enum Protocol {
   UNKNOWN = 0;
   EOS = 1;
   ETH = 2;
+  NEAR = 3;
 }
