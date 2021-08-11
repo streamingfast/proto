@@ -4,7 +4,7 @@ package dfuse.headinfo.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/dfuse-io/pbgo/dfuse/headinfo/v1;pbheadinfo";
+option go_package = "github.com/streamingfast/pbgo/dfuse/headinfo/v1;pbheadinfo";
 
 service HeadInfo {
   rpc GetHeadInfo(HeadInfoRequest) returns (HeadInfoResponse);

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package dfuse.fluxdb.v1;
 
-option go_package = "github.com/dfuse-io/pbgo/dfuse/fluxdb/v1;pbfluxdb";
+option go_package = "github.com/streamingfast/pbgo/dfuse/fluxdb/v1;pbfluxdb";
 
 import "dfuse/bstream/v1/bstream.proto";
 

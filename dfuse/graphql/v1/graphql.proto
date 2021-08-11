@@ -4,7 +4,7 @@ package dfuse.graphql.v1;
 
 import "google/protobuf/struct.proto";
 
-option go_package = "github.com/dfuse-io/pbgo/dfuse/graphql/v1;pbgraphql";
+option go_package = "github.com/streamingfast/pbgo/dfuse/graphql/v1;pbgraphql";
 
 service GraphQL {
   rpc Execute(Request) returns (stream Response) {}
