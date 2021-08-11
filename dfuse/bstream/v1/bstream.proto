@@ -101,8 +101,9 @@ message BlocksRequestV2 {
 
 message BlockResponseV2 {
   // Chain specific block payload, one of:
-  //  - dfuse.ethereum.codec.v1.Block
   //  - dfuse.eosio.codec.v1.Block
+  //  - dfuse.ethereum.codec.v1.Block
+  //  - dfuse.solana.codec.v1.Block
   google.protobuf.Any block = 1;
   ForkStep step = 6;
   string cursor = 10;
@@ -110,11 +111,16 @@ message BlockResponseV2 {
 
 enum ForkStep {
   STEP_UNKNOWN = 0;
-  STEP_NEW = 1; // The first time we see a block, that is linear with the previous block
-  STEP_UNDO = 2; // A block seen previously, that is to be undone
-  reserved 3; // was STEP_REDO
+  // Block is new head block of the chain, that is linear with the previous block
+  STEP_NEW = 1;
+  // Block is now forked and should be undone, it's not the head block of the chain anymore
+  STEP_UNDO = 2;
+  // Removed, was STEP_REDO
+  reserved 3;
+  // Block is now irreversible and can be committed to (finality is chain specific, see chain documentation for more details)
   STEP_IRREVERSIBLE = 4;
-  reserved 5 ; // was STEP_STALLED
+  // Removed, was STEP_STALLED
+  reserved 5 ;
 }
 
 enum BlockDetails {
