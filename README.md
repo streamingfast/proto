@@ -16,4 +16,4 @@ Please make sure to update tests as appropriate.
 
 ## License
 
-All `dfuse` components are generally **Apache 2.0** licensed. See [LICENSE](./LICENSE).
+All StreamingFast components are generally **Apache 2.0** licensed. See [LICENSE](./LICENSE).
