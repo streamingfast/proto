@@ -1,6 +1,6 @@
-# `dfuse` for EOSIO protobuf definitions
+# StreamingFast protobuf definitions
 
-This repository holds protocol buffer definition files (`.proto`) for dfuse core products.
+This repository holds protocol buffer definition files (`.proto`) for StreamingFast core libraries.
 
 ## Usage
 
