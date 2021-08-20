@@ -101,9 +101,10 @@ message BlocksRequestV2 {
 
 message BlockResponseV2 {
   // Chain specific block payload, one of:
-  //  - dfuse.eosio.codec.v1.Block
-  //  - dfuse.ethereum.codec.v1.Block
-  //  - dfuse.solana.codec.v1.Block
+  // - dfuse.eosio.codec.v1.Block
+  // - dfuse.ethereum.codec.v1.Block
+  // - sf.near.codec.v1.Block
+  // - sf.solana.codec.v1.Block
   google.protobuf.Any block = 1;
   ForkStep step = 6;
   string cursor = 10;
@@ -158,5 +159,6 @@ enum Protocol {
   UNKNOWN = 0;
   EOS = 1;
   ETH = 2;
-  NEAR = 3;
+  SOLANA = 3;
+  NEAR = 4;
 }
