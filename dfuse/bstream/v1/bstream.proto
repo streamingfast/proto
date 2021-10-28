@@ -161,4 +161,5 @@ enum Protocol {
   ETH = 2;
   SOLANA = 3;
   NEAR = 4;
+  TENDERMINT = 5;
 }
