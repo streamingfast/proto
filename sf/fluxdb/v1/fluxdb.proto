@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package dfuse.fluxdb.v1;
+package sf.fluxdb.v1;
 
-option go_package = "github.com/streamingfast/pbgo/dfuse/fluxdb/v1;pbfluxdb";
+option go_package = "github.com/streamingfast/pbgo/sf/fluxdb/v1;pbfluxdb";
 
-import "dfuse/bstream/v1/bstream.proto";
+import "sf/bstream/v1/bstream.proto";
 
 // TabletIndex is the binary message used to save a Tablet index
 // value inside persisten storage.
@@ -26,7 +26,7 @@ message TabletIndexEntry {
 // was.
 message Checkpoint {
 	uint64 height = 1;
-	dfuse.bstream.v1.BlockRef block = 2;
+	sf.bstream.v1.BlockRef block = 2;
 }
 
 // WriteRequest represents all the necessary data to write to database
@@ -39,7 +39,7 @@ message WriteRequest {
   repeated WriteEntry tablet_rows = 2;
 
   uint64 height = 3;
-	dfuse.bstream.v1.BlockRef block = 4;
+  sf.bstream.v1.BlockRef block = 4;
 }
 
 message WriteEntry {

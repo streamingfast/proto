@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package dfuse.headinfo.v1;
+package sf.headinfo.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/streamingfast/pbgo/dfuse/headinfo/v1;pbheadinfo";
+option go_package = "github.com/streamingfast/pbgo/sf/headinfo/v1;pbheadinfo";
 
 service HeadInfo {
   rpc GetHeadInfo(HeadInfoRequest) returns (HeadInfoResponse);

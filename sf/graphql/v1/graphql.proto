@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package dfuse.graphql.v1;
+package sf.graphql.v1;
 
 import "google/protobuf/struct.proto";
 
-option go_package = "github.com/streamingfast/pbgo/dfuse/graphql/v1;pbgraphql";
+option go_package = "github.com/streamingfast/pbgo/sf/graphql/v1;pbgraphql";
 
 service GraphQL {
   rpc Execute(Request) returns (stream Response) {}

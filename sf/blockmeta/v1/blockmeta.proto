@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package dfuse.blockmeta.v1;
+package sf.blockmeta.v1;
 
-option go_package = "github.com/streamingfast/pbgo/dfuse/blockmeta/v1;pbblockmeta";
+option go_package = "github.com/streamingfast/pbgo/sf/blockmeta/v1;pbblockmeta";
 
 import "google/protobuf/timestamp.proto";
 

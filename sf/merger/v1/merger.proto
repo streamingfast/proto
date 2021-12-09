@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package dfuse.merger.v1;
+package sf.merger.v1;
 
-import "dfuse/bstream/v1/bstream.proto";
+import "sf/bstream/v1/bstream.proto";
 
-option go_package = "github.com/streamingfast/pbgo/dfuse/merger/v1;pbmerger";
+option go_package = "github.com/streamingfast/pbgo/sf/merger/v1;pbmerger";
 
 service Merger {
   rpc PreMergedBlocks(Request) returns (stream Response);
@@ -17,5 +17,5 @@ message Request {
 
 message Response {
   bool found = 1;
-  dfuse.bstream.v1.Block block = 2;
+  sf.bstream.v1.Block block = 2;
 }

@@ -2,19 +2,16 @@ syntax = "proto3";
 
 package sf.firehose.v1;
 
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/any.proto";
 
 option go_package = "github.com/streamingfast/pbgo/sf/firehose/v1;pbfirehose";
 
-
-service FirehoseStream {
-  rpc Blocks(FirehoseRequest) returns (stream FirehoseResponse);
+service Stream {
+  rpc Blocks(Request) returns (stream Response);
 }
 
-
 // For historical segments, forks are not passed
-message FirehoseRequest {
+message Request {
   // Controls where the stream of blocks will start.
   //
   // The stream will start **inclusively** at the requested block num.
@@ -61,7 +58,8 @@ message FirehoseRequest {
 
   // **Warning** Experimental API, controls how blocks are trimmed for extraneous information before
   // being sent back. The actual trimming is chain dependent.
-  BlockDetails details = 15;
+  //BlockDetails details = 15;
+  reserved 15;
 
   // controls how many confirmations will consider a given block as final (STEP_IRREVERSIBLE). Warning, if any reorg goes beyond that number of confirmations, the request will stall forever
   //uint64 confirmations = 16;
@@ -80,10 +78,10 @@ message FirehoseRequest {
   repeated google.protobuf.Any transforms = 18;
 }
 
-message FirehoseResponse {
+message Response {
   // Chain specific block payload, one of:
-  // - dfuse.eosio.codec.v1.Block
-  // - dfuse.ethereum.codec.v1.Block
+  // - sf.eosio.codec.v1.Block
+  // - sf.ethereum.codec.v1.Block
   // - sf.near.codec.v1.Block
   // - sf.solana.codec.v1.Block
   google.protobuf.Any block = 1;
@@ -105,42 +103,8 @@ enum ForkStep {
   reserved 5 ;
 }
 
+// TODO: move to ethereum specific transforms
 enum BlockDetails {
   BLOCK_DETAILS_FULL = 0;
   BLOCK_DETAILS_LIGHT = 1;
-}
-
-message Cursor {
-  BlockRef block = 1;
-  BlockRef head_block = 2;
-  BlockRef lib = 3;
-  ForkStep step = 4;
-}
-
-// General response and structs
-
-message Block {
-  uint64 number = 1;
-  string id = 2;
-  string previous_id = 3;
-  google.protobuf.Timestamp timestamp = 4;
-  uint64 lib_num = 5;
-
-  Protocol payload_kind = 6;
-  int32 payload_version = 7;
-  bytes payload_buffer = 8;
-}
-
-message BlockRef {
-  uint64 num = 1;
-  string id = 2;
-}
-
-enum Protocol {
-  UNKNOWN = 0;
-  EOS = 1;
-  ETH = 2;
-  SOLANA = 3;
-  NEAR = 4;
-  TENDERMINT = 5;
 }
