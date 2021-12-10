@@ -32,7 +32,7 @@ message Request {
   // Controls where the stream of blocks will start which will be immediately after
   // the Block pointed by this opaque cursor.
   //
-  // Obtain this value from a previously received BlockResponseV2.cursor.
+  // Obtain this value from a previously received `Response.cursor`.
   //
   // This value takes precedence over `start_block_num`.
   string start_cursor = 13;
