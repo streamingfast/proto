@@ -39,6 +39,10 @@ message BlockRef {
 }
 
 
+message BlockRefs {
+  repeated BlockRef blockRefs = 1;
+}
+
 message LIBRequest {}
 
 message NumToIDRequest {
