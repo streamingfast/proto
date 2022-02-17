@@ -83,3 +83,13 @@ enum Protocol {
   NEAR = 4;
   TENDERMINT = 5;
 }
+
+message GenericBlockIndex {
+  reserved 1,2,3; // eventually add a small bloomfilter at the beginning of the file, as further optimization
+  repeated KeyToBitmap kv = 4;
+}
+
+message KeyToBitmap {
+  bytes key = 1;
+  bytes bitmap = 2;
+}
