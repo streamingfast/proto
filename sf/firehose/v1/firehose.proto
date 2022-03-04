@@ -48,22 +48,11 @@ message Request {
   // Most common steps will be [STEP_IRREVERSIBLE], or [STEP_NEW, STEP_UNDO, STEP_IRREVERSIBLE].
   repeated ForkStep fork_steps = 8;
 
-  // The CEL filter expression used to include transactions, specific to the target protocol,
-  // works in combination with `exclude_filter_expr` value.
-  string include_filter_expr = 10;
-
-  // The CEL filter expression used to exclude transactions, specific to the target protocol, works
-  // in combination with `include_filter_expr` value.
-  string exclude_filter_expr = 11;
-
-  // **Warning** Experimental API, controls how blocks are trimmed for extraneous information before
-  // being sent back. The actual trimming is chain dependent.
-  //BlockDetails details = 15;
-  reserved 15;
-
-  // controls how many confirmations will consider a given block as final (STEP_IRREVERSIBLE). Warning, if any reorg goes beyond that number of confirmations, the request will stall forever
-  //uint64 confirmations = 16;
-  reserved 16;
+  // feature moved to transforms
+  string include_filter_expr = 10 [deprecated=true];
+  string exclude_filter_expr = 11 [deprecated=true];
+  reserved 15; // removed: details
+  reserved 16; // removed: confirmations
 
 
   //- EOS "handoffs:3"
@@ -101,10 +90,4 @@ enum ForkStep {
   STEP_IRREVERSIBLE = 4;
   // Removed, was STEP_STALLED
   reserved 5 ;
-}
-
-// TODO: move to ethereum specific transforms
-enum BlockDetails {
-  BLOCK_DETAILS_FULL = 0;
-  BLOCK_DETAILS_LIGHT = 1;
 }
