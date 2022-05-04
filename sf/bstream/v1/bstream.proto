@@ -68,6 +68,8 @@ message Block {
   Protocol payload_kind = 6;
   int32 payload_version = 7;
   bytes payload_buffer = 8;
+
+  google.protobuf.Any payload = 9;
 }
 
 message BlockRef {
