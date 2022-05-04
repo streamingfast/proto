@@ -3,6 +3,7 @@ syntax = "proto3";
 package sf.bstream.v1;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
 
 option go_package = "github.com/streamingfast/pbgo/sf/bstream/v1;pbbstream";
 
