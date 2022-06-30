@@ -43,19 +43,9 @@ message Request {
   // **inclusive**.
   uint64 stop_block_num = 3;
 
-  // no_block_finality and no_reorg_finality result in the following matrix:
-  //
-  // NO_REORG  NO_FINALITY     Received steps (example stream)
-  // 0         0               NEW_IRR NEW_IRR NEW UNDO NEW NEW IRR IRR NEW
-  // 1         0               IRR IRR IRR IRR IRR IRR IRR
-  // 0         1               NEW UNDO NEW UNDO NEW NEW
-  // 1         1               NEW NEW NEW NEW NEW
-
-  // do not send any kind of irreversibility step
-  bool no_block_finality  = 4;
-
-  // do not send any undo step
-  bool no_reorg_navigation  = 5;
+  // With final_block_only, you only receive blocks with STEP_FINAL
+  // Default behavior will send blocks as STEP_NEW, with occasional STEP_UNDO
+  bool final_blocks_only = 4;
 
   repeated google.protobuf.Any transforms = 10;
 }
@@ -73,20 +63,13 @@ message Response {
 enum ForkStep {
   STEP_UNSET = 0;
 
-  // Block is new head block of the chain, that is linear with the previous
-  // block
+  // Incoming block
   STEP_NEW = 1;
 
-  // Block is now forked and should be undone, it's not the head block of
-  // the chain anymore
+  // A reorg caused this specific block to be excluded from the chain
   STEP_UNDO = 2;
 
-  // Block is now irreversible and can be committed (finality is chain specific,
+  // Block is now final and can be committed (finality is chain specific,
   // see chain documentation for more details)
-  STEP_IRREVERSIBLE = 3;
-
-  // Block is new head block of the chain, linear with the previous block,
-  // AND we already know that is irreversible, so
-  // we won't send you an extraneous STEP_IRREVERSIBLE for it
-  STEP_NEW_IRREVERSIBLE = 4;
+  STEP_FINAL = 3;
 }
