@@ -14,6 +14,8 @@ service BlockStream {
 
 message BlockRequest {
   // Number of blocks we want to get in burst upon connection, on a best effort basis.
+  // -1 means "LIB"
+  // any other "-X" value means "start at block X"
   int64 burst = 1;
 
   // Type of blocks we're after here, is it 'ethereum' data, 'eos', etc.. The server can fail early
