@@ -10,6 +10,41 @@ service Stream {
   rpc Blocks(Request) returns (stream Response);
 }
 
+service Fetch {
+  rpc Block(SingleBlockRequest) returns (SingleBlockResponse);
+}
+
+message SingleBlockRequest {
+
+  // Get the current known canonical version of a block at with this number
+  message BlockNumber{
+    uint64 num=1;
+  }
+
+  // Get the current block with specific hash and number
+  message BlockHashAndNumber{
+    uint64 num=1;
+    string hash=2;
+  }
+
+  // Get the block that generated a specific cursor
+  message Cursor{
+    string cursor=1;
+  }
+
+  oneof reference{
+    BlockNumber block_number=3;
+    BlockHashAndNumber block_hash_and_number=4;
+    Cursor cursor=5;
+  }
+}
+
+message SingleBlockResponse {
+  google.protobuf.Any block = 1;
+
+  repeated google.protobuf.Any transforms = 2;
+}
+
 message Request {
 
   // Controls where the stream of blocks will start.
