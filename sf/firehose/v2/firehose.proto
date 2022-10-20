@@ -37,12 +37,12 @@ message SingleBlockRequest {
     BlockHashAndNumber block_hash_and_number=4;
     Cursor cursor=5;
   }
+
+  repeated google.protobuf.Any transforms = 6;
 }
 
 message SingleBlockResponse {
   google.protobuf.Any block = 1;
-
-  repeated google.protobuf.Any transforms = 2;
 }
 
 message Request {
