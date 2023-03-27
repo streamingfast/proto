@@ -39,6 +39,10 @@ message SingleBlockRequest {
   }
 
   repeated google.protobuf.Any transforms = 6;
+
+  // requestor_id is an optional string that the requestor can set and should appear
+  // in the firehose logs for debugging. It must be limited to Base58-compatible characters.
+  optional string requestor_id = 7;
 }
 
 message SingleBlockResponse {
@@ -81,6 +85,10 @@ message Request {
   // With final_block_only, you only receive blocks with STEP_FINAL
   // Default behavior will send blocks as STEP_NEW, with occasional STEP_UNDO
   bool final_blocks_only = 4;
+
+  // requestor_id is an optional string that the requestor can set and should appear
+  // in the firehose logs for debugging. It must be limited to Base58-compatible characters.
+  optional string requestor_id = 5;
 
   repeated google.protobuf.Any transforms = 10;
 }
