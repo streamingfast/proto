@@ -1,0 +1,24 @@
+version: v1
+name: buf.build/streamingfast/firehose
+
+deps: []
+
+build:
+  excludes:
+  - google
+  - sf/blockmeta
+  - sf/bstream
+  - sf/firehose/v1
+  - sf/fluxdb
+  - sf/graphql
+  - sf/headinfo
+  - sf/merger
+  - sf/search
+
+lint:
+  use:
+    - DEFAULT
+
+breaking:
+  use:
+    - FILE
