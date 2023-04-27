@@ -2,11 +2,11 @@
 
 Protobuf definitions for consuming StreamingFast Firehose stream of blocks.
 
-A stream request to receive Firehose blocks can be done using [sf.firehose.v2.Stream.Blocks](:sf.firehose.v2#sf.firehose.v2.Stream.Blocks).
+A stream request to receive Firehose blocks can be done using [sf.firehose.v2.Stream.Blocks](https://buf.build/streamingfast/firehose/docs/main:sf.firehose.v2#sf.firehose.v2.Stream.Blocks).
 
-A RPC request to receive a single Firehose block can be done using [sf.firehose.v2.Fetch.Block](:sf.firehose.v2#sf.firehose.v2.Fetch.Block).
+A RPC request to receive a single Firehose block can be done using [sf.firehose.v2.Fetch.Block](https://buf.build/streamingfast/firehose/docs/main:sf.firehose.v2#sf.firehose.v2.Fetch.Block).
 
-The [Response](:sf.firehose.v2#sf.firehose.v2.Response) object contains a block response of type `google.protobuf.Any`, the type returned depends on the endpoint you reach, there is a chain specific Protobuf Block.
+The [Response](https://buf.build/streamingfast/firehose/docs/main:sf.firehose.v2#sf.firehose.v2.Response) object contains a block response of type `google.protobuf.Any`, the type returned depends on the endpoint you reach, there is a chain specific Protobuf Block.
 
 Here a list of links to currently supported chain Protobuf definitions (more may be available):
 - [Ethereum](https://github.com/streamingfast/firehose-ethereum/blob/develop/proto/sf/ethereum/type/v2/type.proto) <small>Englobe Ethereum, BSC, Polygon and other Ethereum forks</small>
