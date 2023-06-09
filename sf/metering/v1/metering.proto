@@ -37,5 +37,5 @@ message Metric {
       WRITTEN_BYTES = 5;
   }
   Key key = 1;
-  int64 value = 2;
+  double value = 2;
 }
