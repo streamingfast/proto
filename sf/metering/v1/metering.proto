@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package sf.metering.v1;
+
+option go_package = "github.com/streamingfast/pbgo/sf/metering/v1;pbmetering";
+
+import "google/protobuf/timestamp.proto";
+
+message Event {
+  string user_id = 1;
+  string api_key  = 2;
+  string api_key_id  = 3;
+  string api_key_usage = 4;
+  string ip_address = 5;
+  string network = 6; // eth-mainnet
+  string service = 7; // firehose , substreams, exmx
+  string method = 9; // grpc_blocks, grpc_run, http_GetState, GetBlockHead
+  repeated MetadataField metadata = 10;
+
+  repeated Metric metrics = 20;
+
+  google.protobuf.Timestamp timestamp = 30;
+}
+
+message MetadataField {
+  string key = 1;
+  string value = 2;
+}
+
+message Metric {
+  enum Key {
+      REQUESTS_COUNT = 0;
+      RESPONSES_COUNT = 1;
+      INGRESS_BYTES = 2;
+      EGRESS_BYTES = 3;
+      READ_BYTES = 4;
+      WRITTEN_BYTES = 5;
+  }
+  Key key = 1;
+  int64 value = 2;
+}
