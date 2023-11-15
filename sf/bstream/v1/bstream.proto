@@ -3,6 +3,7 @@ syntax = "proto3";
 package sf.bstream.v1;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
 
 option go_package = "github.com/streamingfast/pbgo/sf/bstream/v1;pbbstream";
 
@@ -71,6 +72,9 @@ message Block {
   int32 payload_version = 7;
   bytes payload_buffer = 8;
   uint64 head_num = 9; // when set, indicates the current server head block
+
+  uint64 previous_num = 10;
+  google.protobuf.Any payload = 11;
 }
 
 message BlockRef {
