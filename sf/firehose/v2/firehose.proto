@@ -3,6 +3,7 @@ syntax = "proto3";
 package sf.firehose.v2;
 
 import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/streamingfast/pbgo/sf/firehose/v2;pbfirehose";
 
@@ -12,7 +13,75 @@ service Stream {
 
 service Fetch {
   rpc Block(SingleBlockRequest) returns (SingleBlockResponse);
+
+  // Examples
+  //
+  // - grpcurl -d '{"by_block_number":{"num":1}}' <endpoint> sf.firehose.v2.Fetch/BlockMeta
+  // - grpcurl -d '{"by_block_hash":{"hash":"<hash>"}}' <endpoint> sf.firehose.v2.Fetch/BlockMeta
+  // - grpcurl -d '{"by_block_hash_and_number":{"num":1,"hash":"<hash>"}}' <endpoint> sf.firehose.v2.Fetch/BlockMeta
+  rpc BlockMeta(BlockMetaRequest) returns (BlockMetaResponse);
 }
+
+// Comments
+//
+// - We need to define the semantics of the query, do we search only
+//   in the canonical chain or do we search in all forks?
+//
+//   Today we search in all forks, but we might want to change that.
+//   We could also returned from where we picked the block.
+//
+// - We need to agree on how to represent hashes, right now we use
+//   hexadecimal strings for Ethereum, but I think Solana uses base58/64.
+//
+//   Right now all hash must be passed in hexadecimal format for Ethereum
+//   but I think we might have inconsistencies, I think for example Solana
+//   emit base58/64 encoded hashes.
+//
+//   We will need to agree on a single agnostic format, maybe `[]byte` should be
+//   used, will check that with the team.
+message BlockMetaRequest {
+  // Get the current known canonical version of a block at with this number
+  message BlockNumber{
+    uint64 num = 1;
+  }
+
+  // Get the current known block with this hash
+  message BlockHash{
+    string hash = 1;
+  }
+
+  // Get the current block with specific hash and number
+  message BlockHashAndNumber{
+    uint64 num = 1;
+    string hash = 2;
+  }
+
+  // Get the block that generated a specific cursor
+  message Cursor{
+    string cursor = 1;
+  }
+
+  oneof reference {
+    BlockNumber by_block_number = 1;
+    BlockHash by_block_hash = 2;
+    BlockHashAndNumber by_block_hash_and_number = 3;
+    Cursor by_cursor = 4;
+  }
+
+  // Is it possible that you send a hash that was forked at some point,
+  // we will need to define the semantics of the query and the needs
+  bool include_forks = 5;
+}
+
+message BlockMetaResponse {
+  uint64 number = 1;
+  string hash = 2;
+  uint64 parent_number = 3;
+  string parent_hash = 4;
+  uint64 last_final_block_number = 5;
+  google.protobuf.Timestamp timestamp = 6;
+}
+
 
 message SingleBlockRequest {
 
