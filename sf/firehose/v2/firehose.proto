@@ -3,6 +3,7 @@ syntax = "proto3";
 package sf.firehose.v2;
 
 import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/streamingfast/pbgo/sf/firehose/v2;pbfirehose";
 
@@ -43,6 +44,10 @@ message SingleBlockRequest {
 
 message SingleBlockResponse {
   google.protobuf.Any block = 1;
+
+  // Metadata about the block, added in some Firehose version, so consumer
+  // should be ready to handle the absence of this field.
+  BlockMetadata metadata = 2;
 }
 
 message Request {
@@ -93,6 +98,41 @@ message Response {
   google.protobuf.Any block = 1;
   ForkStep step = 6;
   string cursor = 10;
+
+  // Metadata about the block, added in some Firehose version, so consumer
+  // should be ready to handle the absence of this field.
+  BlockMetadata metadata = 12;
+}
+
+message BlockMetadata {
+  // Num is the block number of this response's block.
+  uint64 num = 1;
+  // ID is the block ID of this response's block. The ID actual representation is chain specific.
+  // - Antelope & Ethereum uses hex.
+  // - NEAR & Solana uses base58.
+  //
+  // Refer to the chain documentation for more details.
+  string id = 2;
+
+  // ParentNum is the block number of the parent of this response's block
+  uint64 parent_num = 3;
+
+  // ParentID is the block ID of the parent of this response's block. If this response is the genesis block,
+  // this field is empty.
+  //
+  // The ID actual representation is chain specific.
+  // - Antelope & Ethereum uses hex.
+  // - NEAR & Solana uses base58.
+  //
+  // Refer to the chain documentation for more details.
+  string parent_id = 4;
+
+  // LibNum is the block number of the last irreversible block (a.k.a last finalized block) at the time of this
+  // response' block. It determines the finality of the block.
+  uint64 lib_num = 5;
+
+  // Time is the time at which the block was produced.
+  google.protobuf.Timestamp time = 6;
 }
 
 enum ForkStep {
