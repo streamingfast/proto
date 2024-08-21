@@ -181,7 +181,7 @@ message InfoResponse {
     // as well as the `first_streamable_block_id` above.
     BlockIdEncoding block_id_encoding = 5;
 
-    // features describes the blocks. Popular values for EVM chains include `light`, `extended` or `hybrid`.
+    // features describes the blocks. Popular values for EVM chains include `base`, `extended` or `hybrid`.
     repeated string block_features = 10;
 
 }
