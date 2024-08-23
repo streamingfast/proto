@@ -175,6 +175,7 @@ message InfoResponse {
         BLOCK_ID_ENCODING_0X_HEX = 2;
         BLOCK_ID_ENCODING_BASE58 = 3;
         BLOCK_ID_ENCODING_BASE64 = 4;
+        BLOCK_ID_ENCODING_BASE64URL = 5;
     }
 
     // This informs the client on how to decode the `block_id` field inside the "Clock" message
