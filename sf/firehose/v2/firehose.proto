@@ -92,6 +92,15 @@ message Request {
   // Default behavior will send blocks as STEP_NEW, with occasional STEP_UNDO
   bool final_blocks_only = 4;
 
+  // With include_partial_blocks, you will also receive blocks with STEP_PARTIAL
+  // An example of a partial block is a "Flash Block" as seen on the BASE blockchain.
+  // Blocks with STEP_PARTIAL are do not receive an "UNDO" signal when they are replaced
+  // by another partial block or by the full block.
+  // You will ALWAYS receive a "NEW" signal with a full block when a full block replaces a partial block
+  // You should never receive an "old" STEP_PARTIAL
+  //
+  bool include_partial_blocks = 5;
+
   repeated google.protobuf.Any transforms = 10;
 }
 
@@ -152,6 +161,14 @@ enum ForkStep {
   // Block is now final and can be committed (finality is chain specific,
   // see chain documentation for more details)
   STEP_FINAL = 3;
+
+  // Partial block
+  // An example of a partial block is a "Flash Block" as seen on the BASE blockchain.
+  // Blocks with STEP_PARTIAL are do not receive an "UNDO" signal when they are replaced
+  // by another partial block or by the full block.
+  // You will ALWAYS receive a "NEW" signal with a full block when a full block replaces a partial block
+  // You should never receive an "old" STEP_PARTIAL
+  STEP_PARTIAL = 4;
 }
 
 message InfoRequest {}
@@ -164,7 +181,7 @@ message InfoResponse {
     // Alternate names for the chain.
     repeated string chain_name_aliases = 2;
 
-    // First block that is served by this endpoint. This should usually be the genesis block, 
+    // First block that is served by this endpoint. This should usually be the genesis block,
     // but some providers may have truncated history.
     uint64 first_streamable_block_num = 3;
     string first_streamable_block_id = 4;
@@ -186,4 +203,3 @@ message InfoResponse {
     repeated string block_features = 10;
 
 }
-
