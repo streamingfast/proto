@@ -15,33 +15,31 @@ service Fetch {
   rpc Block(SingleBlockRequest) returns (SingleBlockResponse);
 }
 
-
 service EndpointInfo {
   rpc Info(InfoRequest) returns (InfoResponse);
 }
 
 message SingleBlockRequest {
-
   // Get the current known canonical version of a block at with this number
-  message BlockNumber{
-    uint64 num=1;
+  message BlockNumber {
+    uint64 num = 1;
   }
 
   // Get the current block with specific hash and number
-  message BlockHashAndNumber{
-    uint64 num=1;
-    string hash=2;
+  message BlockHashAndNumber {
+    uint64 num = 1;
+    string hash = 2;
   }
 
   // Get the block that generated a specific cursor
-  message Cursor{
-    string cursor=1;
+  message Cursor {
+    string cursor = 1;
   }
 
-  oneof reference{
-    BlockNumber block_number=3;
-    BlockHashAndNumber block_hash_and_number=4;
-    Cursor cursor=5;
+  oneof reference {
+    BlockNumber block_number = 3;
+    BlockHashAndNumber block_hash_and_number = 4;
+    Cursor cursor = 5;
   }
 
   repeated google.protobuf.Any transforms = 6;
@@ -56,7 +54,6 @@ message SingleBlockResponse {
 }
 
 message Request {
-
   // Controls where the stream of blocks will start.
   //
   // The stream will start **inclusively** at the requested block num.
@@ -92,14 +89,7 @@ message Request {
   // Default behavior will send blocks as STEP_NEW, with occasional STEP_UNDO
   bool final_blocks_only = 4;
 
-  // With include_partial_blocks, you will also receive blocks with STEP_PARTIAL
-  // An example of a partial block is a "Flash Block" as seen on the BASE blockchain.
-  // Blocks with STEP_PARTIAL are do not receive an "UNDO" signal when they are replaced
-  // by another partial block or by the full block.
-  // You will ALWAYS receive a "NEW" signal with a full block when a full block replaces a partial block
-  // You should never receive an "old" STEP_PARTIAL
-  //
-  bool include_partial_blocks = 5;
+  reserved 5; // deprecated attempt at partial blocks
 
   repeated google.protobuf.Any transforms = 10;
 }
@@ -162,44 +152,36 @@ enum ForkStep {
   // see chain documentation for more details)
   STEP_FINAL = 3;
 
-  // Partial block
-  // An example of a partial block is a "Flash Block" as seen on the BASE blockchain.
-  // Blocks with STEP_PARTIAL are do not receive an "UNDO" signal when they are replaced
-  // by another partial block or by the full block.
-  // You will ALWAYS receive a "NEW" signal with a full block when a full block replaces a partial block
-  // You should never receive an "old" STEP_PARTIAL
-  STEP_PARTIAL = 4;
+  reserved 4; // Deprecated attempt at partial blocks
 }
 
 message InfoRequest {}
 
 message InfoResponse {
+  // Canonical chain name from https://thegraph.com/docs/en/developing/supported-networks/ (ex: matic, mainnet ...)
+  string chain_name = 1;
 
-    // Canonical chain name from https://thegraph.com/docs/en/developing/supported-networks/ (ex: matic, mainnet ...)
-    string chain_name = 1;
+  // Alternate names for the chain.
+  repeated string chain_name_aliases = 2;
 
-    // Alternate names for the chain.
-    repeated string chain_name_aliases = 2;
+  // First block that is served by this endpoint. This should usually be the genesis block,
+  // but some providers may have truncated history.
+  uint64 first_streamable_block_num = 3;
+  string first_streamable_block_id = 4;
 
-    // First block that is served by this endpoint. This should usually be the genesis block,
-    // but some providers may have truncated history.
-    uint64 first_streamable_block_num = 3;
-    string first_streamable_block_id = 4;
+  enum BlockIdEncoding {
+    BLOCK_ID_ENCODING_UNSET = 0;
+    BLOCK_ID_ENCODING_HEX = 1;
+    BLOCK_ID_ENCODING_0X_HEX = 2;
+    BLOCK_ID_ENCODING_BASE58 = 3;
+    BLOCK_ID_ENCODING_BASE64 = 4;
+    BLOCK_ID_ENCODING_BASE64URL = 5;
+  }
 
-    enum BlockIdEncoding {
-        BLOCK_ID_ENCODING_UNSET = 0;
-        BLOCK_ID_ENCODING_HEX = 1;
-        BLOCK_ID_ENCODING_0X_HEX = 2;
-        BLOCK_ID_ENCODING_BASE58 = 3;
-        BLOCK_ID_ENCODING_BASE64 = 4;
-        BLOCK_ID_ENCODING_BASE64URL = 5;
-    }
+  // This informs the client on how to decode the `block_id` field inside the "Clock" message
+  // as well as the `first_streamable_block_id` above.
+  BlockIdEncoding block_id_encoding = 5;
 
-    // This informs the client on how to decode the `block_id` field inside the "Clock" message
-    // as well as the `first_streamable_block_id` above.
-    BlockIdEncoding block_id_encoding = 5;
-
-    // features describes the blocks. Popular values for EVM chains include `base`, `extended` or `hybrid`.
-    repeated string block_features = 10;
-
+  // features describes the blocks. Popular values for EVM chains include `base`, `extended` or `hybrid`.
+  repeated string block_features = 10;
 }
