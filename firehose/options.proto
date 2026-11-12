@@ -1,0 +1,38 @@
+// Custom options used to annotate a chain's Firehose Block protobuf definition so
+// generic tooling can locate the parts of a block it needs without hard-coding names.
+//
+// Usage:
+//
+//   import "firehose/options.proto";
+//
+//   message MyBlock {                       // or simply name it `Block`
+//     option (firehose.block) = true;
+//
+//     repeated Transaction txs = 1 [(firehose.transactions) = true];
+//     int64 received_at_ms = 2 [(firehose.non_deterministic) = true];
+//   }
+//
+// Extension number 76145 is intentionally unused: it was `header`, which got removed.
+syntax = "proto3";
+
+// buf:lint:ignore PACKAGE_VERSION_SUFFIX
+package firehose;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/streamingfast/pbgo/firehose;pbfirehose";
+
+extend google.protobuf.MessageOptions {
+  // block marks the root Block message of a file. Optional: when no message
+  // carries this option, a message named `Block` is used as the fallback.
+  bool block = 76148;
+}
+
+extend google.protobuf.FieldOptions {
+  // transactions marks the repeated message field holding the block's transactions.
+  bool transactions = 76146;
+
+  // non_deterministic marks fields whose value may differ between nodes for the
+  // same block; tooling may clear them when diffing blocks.
+  bool non_deterministic = 76147;
+}
