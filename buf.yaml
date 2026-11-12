@@ -18,6 +18,9 @@ build:
 lint:
   use:
     - DEFAULT
+  ignore_only:
+    PACKAGE_VERSION_SUFFIX:
+      - firehose/options.proto
 
 breaking:
   use:
