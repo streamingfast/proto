@@ -15,7 +15,6 @@
 // Extension number 76145 is intentionally unused: it was `header`, which got removed.
 syntax = "proto3";
 
-// buf:lint:ignore PACKAGE_VERSION_SUFFIX
 package firehose;
 
 import "google/protobuf/descriptor.proto";
